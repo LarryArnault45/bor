@@ -388,10 +388,7 @@ func (p *ethPeer) RequestWitnessesWithVerification(hashes []common.Hash, dlResCh
 		if len(receivedWitPages) == 0 || len(reconstructedWitness) == 0 || lastWitRes == nil {
 			p.witPeer.Peer.Log().Warn("Empty response received for witnesses requested from peer", "peer", p.ID(), "requestedHashes", hashes)
 
-			doneCh := make(chan error)
-			go func() {
-				<-doneCh
-			}()
+			doneCh := make(chan error, 1)
 
 			emptyWitnesses := make([]*stateless.Witness, 0)
 			emptyRes := &eth.Response{
@@ -421,10 +418,7 @@ func (p *ethPeer) RequestWitnessesWithVerification(hashes []common.Hash, dlResCh
 		if len(witnesses) != len(hashes) {
 			p.witPeer.Peer.Log().Error("Not able to fetch all requests witnesses", "peer", p.ID(), "requestedHashes", hashes, "responseHashes", responseHashes)
 		}
-		doneCh := make(chan error)
-		go func() {
-			<-doneCh
-		}()
+		doneCh := make(chan error, 1)
 
 		// Adapt wit.Response[] to eth.Response.
 		// We can only copy exported fields. The unexported fields (id, recv, code)
